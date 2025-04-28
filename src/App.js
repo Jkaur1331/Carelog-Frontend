@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./Screens/Login";
+import Register from "./Screens/Register";
+import Dashboard from "./Screens/Dashboard";
+import Participant from "./Screens/Participant";
+import Profile from "./Screens/Profile";
+import AdminDashboard from "./Screens/AdminDashboard";
+import Companies from "./Screens/Companies";
+import CompanyProfile from "./Screens/CompanyProfile";
+import Forms from "./Screens/Forms";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/participant" element={<Participant />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/company-profile" element={<CompanyProfile />} />
+        <Route path="/forms" element={<Forms />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
