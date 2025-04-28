@@ -115,7 +115,14 @@ const CompanyProfile = () => {
             <div className="col-50 company-progress">
               <div class="card-company">
                 <div class="card-header">
-                  <h3>Participant Utilization Limit</h3>
+                  <div>
+                    <h3>Participant Utilization Limit</h3>
+                    <p class="card-description">
+                      This organization is currently managing{" "}
+                      <span class="highlight">18</span> out of 50 allowed
+                      participants under their plan
+                    </p>
+                  </div>
                   <div class="progress-circle">
                     <svg width="48" height="48">
                       <circle class="bg" cx="24" cy="24" r="20" />
@@ -124,17 +131,12 @@ const CompanyProfile = () => {
                     <div class="progress-text">80%</div>
                   </div>
                 </div>
-                <p class="card-description">
-                  This organization is currently managing
-                  <span class="highlight">18</span> out of 50 allowed
-                  participants under their plan
-                </p>
               </div>
 
               <div class="card-company">
                 <h3>Form Access Overview</h3>
                 <p class="card-description">
-                  This organization is currently using
+                  This organization is currently using{" "}
                   <span class="highlight">3</span> out of the 5 forms allowed in
                   their subscription plan
                 </p>

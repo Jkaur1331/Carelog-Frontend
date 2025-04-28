@@ -2,21 +2,57 @@ import React, { useState } from "react";
 import Header from "../Reuseable/Header";
 import company from "../images/company.png";
 import SidebarAdmin from "../Reuseable/SidebarAdmin";
-
+import user from "../images/user.svg";
+import filter from "../images/filter.svg";
 const Companies = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isModalEdit, setModalEdit] = useState(false);
-  const [isFilterOpen, setFilterOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalEdit, setIsModalEdit] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [openElips, setOpenElips] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
-  const openModal = () => setModalOpen(true);
-  const editModal = () => setModalEdit(true);
-  const openFilter = () => setFilterOpen(true);
+  const openModal = () => {
+    setShowModal(true);
+    setTimeout(() => {
+      setIsModalOpen(true);
+    }, 10);
+  };
+  const openFilter = () => {
+    setShowFilterModal(true);
+    setTimeout(() => {
+      setIsFilterOpen(true);
+    }, 10);
+  };
+
+  const openEditModal = () => {
+    setShowModalEdit(true);
+    setTimeout(() => {
+      setIsModalEdit(true);
+    }, 10);
+  };
+
   const openEplipsis = () => setOpenElips(true);
-  const closeModal = () => setModalOpen(false);
-  const editCloseModal = () => setModalEdit(false);
-  const closeFilter = () => setFilterOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setShowModal(false);
+    }, 300);
+  };
+  const closeFilter = () => {
+    setIsFilterOpen(false);
+    setTimeout(() => {
+      setShowFilterModal(false);
+    }, 300);
+  };
+  const editCloseModal = () => {
+    setIsModalEdit(false);
+    setTimeout(() => {
+      setShowModalEdit(false);
+    }, 300);
+  };
   const closeDelete = () => setOpenDelete(false);
 
   return (
@@ -44,10 +80,10 @@ const Companies = () => {
                   cursor: "pointer",
                 }}
               >
-                <i className="fa-solid fa-sliders"></i>
+                <img src={filter} alt="" />
               </button>
               <button className="btn-add-participant" onClick={openModal}>
-                <i className="fa-solid fa-plus"></i> Add Company
+                <img src={user} alt="" /> Add Participant
               </button>
             </div>
           </div>
@@ -72,8 +108,9 @@ const Companies = () => {
               </thead>
               <tbody class="table-body">
                 <tr class="table-row">
-                  <td class="cell-checkbox">
-                    <input type="checkbox" class="row-checkbox" />
+                  <td className="checkbox-col">
+                    <span className="row-number">1</span>
+                    <input type="checkbox" className="row-checkbox" />
                   </td>
                   <td class="cell-company">
                     <img
@@ -115,7 +152,7 @@ const Companies = () => {
                         <li
                           onClick={() => {
                             setOpenElips(false);
-                            editModal();
+                            openEditModal();
                           }}
                         >
                           <i className="fa-solid fa-pencil"></i>
@@ -297,22 +334,23 @@ const Companies = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && (
+      {showModal && (
         <div className={`modal-overlay ${isModalOpen ? "visible" : ""}`}>
-          <div className="modal-panel">
+          <div
+            className={`modal-panel ${isModalOpen ? "slide-in" : "slide-out"}`}
+          >
             <div className="modal-header">
               <h2>Add New Company</h2>
               <button
                 className="close-button"
                 id="closeModalBtn"
-                aria-label="Close modal"
                 onClick={closeModal}
               >
                 ×
               </button>
             </div>
             <div className="modal-body">
-              <form action="#" method="post">
+              <form action="#" method="post" id="participantForm">
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="CompanyName">
@@ -322,6 +360,7 @@ const Companies = () => {
                       type="text"
                       id="CompanyName"
                       name="CompanyName"
+                      placeholder="Enter company name"
                       required
                     />
                   </div>
@@ -333,6 +372,7 @@ const Companies = () => {
                       type="text"
                       id="CompanyId"
                       name="CompanyId"
+                      placeholder="Enter company ID"
                       required
                     />
                   </div>
@@ -344,12 +384,18 @@ const Companies = () => {
                       type="text"
                       id="contactInfo"
                       name="contactInfo"
+                      placeholder="Enter contact person's name"
                       required
                     />
                   </div>
                   <div className="form-group">
                     <label htmlFor="phoneNumber">Phone Number</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" />
+                    <input
+                      type="tel"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      placeholder="Enter phone number"
+                    />
                   </div>
                 </div>
                 <div className="form-group">
@@ -362,16 +408,28 @@ const Companies = () => {
                 </div>
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="contactInfo">
+                    <label htmlFor="startDate">
                       Start Date<span className="required">*</span>
                     </label>
-                    <input type="date" name="startDate" required />
+                    <input
+                      type="date"
+                      name="startDate"
+                      id="startDate"
+                      placeholder="Select start date"
+                      required
+                    />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="contactInfo">
+                    <label htmlFor="endDate">
                       End Date<span className="required">*</span>
                     </label>
-                    <input type="date" name="endDate" required />
+                    <input
+                      type="date"
+                      name="endDate"
+                      id="endDate"
+                      placeholder="Select end date"
+                      required
+                    />
                   </div>
                 </div>
                 <div className="form-group">
@@ -429,9 +487,12 @@ const Companies = () => {
           </div>
         </div>
       )}
-      {isFilterOpen && (
+
+      {showFilterModal && (
         <div className={`modal-overlay ${isFilterOpen ? "visible" : ""}`}>
-          <div className="modal-panel">
+          <div
+            className={`modal-panel ${isFilterOpen ? "slide-in" : "slide-out"}`}
+          >
             <div className="modal-header">
               <h2>Filter By</h2>
               <button
@@ -550,9 +611,11 @@ const Companies = () => {
           </div>
         </div>
       )}
-      {isModalEdit && (
+      {showModalEdit && (
         <div className={`modal-overlay ${isModalEdit ? "visible" : ""}`}>
-          <div className="modal-panel">
+          <div
+            className={`modal-panel ${isModalEdit ? "slide-in" : "slide-out"}`}
+          >
             <div className="modal-header">
               <h2>Edit Company</h2>
               <button
@@ -609,22 +672,27 @@ const Companies = () => {
                   <label htmlFor="subsPlan">
                     Subscription Plan<span className="required">*</span>
                   </label>
-                  <select name="subsPlan">
+                  <select name="subsPlan" id="subsPlan">
                     <option value="">Trial</option>
                   </select>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="contactInfo">
+                    <label htmlFor="startDate">
                       Start Date<span className="required">*</span>
                     </label>
-                    <input type="date" name="startDate" required />
+                    <input
+                      type="date"
+                      name="startDate"
+                      id="startDate"
+                      required
+                    />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="contactInfo">
+                    <label htmlFor="endDate">
                       End Date<span className="required">*</span>
                     </label>
-                    <input type="date" name="endDate" required />
+                    <input type="date" name="endDate" id="endDate" required />
                   </div>
                 </div>
                 <div className="form-group">

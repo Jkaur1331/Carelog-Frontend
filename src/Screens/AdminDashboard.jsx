@@ -2,6 +2,10 @@ import React from "react";
 import SidebarAdmin from "../Reuseable/SidebarAdmin";
 import Header from "../Reuseable/Header";
 import company from "../images/company.png";
+import users from "../images/users.svg";
+import filled from "../images/filled.svg";
+import shift from "../images/shift.svg";
+import companies from "../images/company.svg";
 
 const AdminDashboard = () => {
   return (
@@ -19,7 +23,7 @@ const AdminDashboard = () => {
                   <span className="card-value">200</span>
                 </div>
                 <div className="card-icon-wrapper bg-blue-light">
-                  <i className="fa-solid fa-users icon-blue"></i>
+                  <img src={companies} alt="" />
                 </div>
               </div>
               <div className="card card-active-participants">
@@ -28,7 +32,7 @@ const AdminDashboard = () => {
                   <span className="card-value">12</span>
                 </div>
                 <div className="card-icon-wrapper bg-teal-light">
-                  <i className="fa-solid fa-user-check icon-teal"></i>
+                  <img src={users} alt="" />
                 </div>
               </div>
               <div className="card card-forms-filled">
@@ -37,7 +41,7 @@ const AdminDashboard = () => {
                   <span className="card-value">12</span>
                 </div>
                 <div className="card-icon-wrapper bg-orange-light">
-                  <i className="fa-solid fa-pen-to-square icon-orange"></i>
+                  <img src={filled} alt="" />
                 </div>
               </div>
               <div className="card card-active-shifts">
@@ -46,7 +50,7 @@ const AdminDashboard = () => {
                   <span className="card-value">12</span>
                 </div>
                 <div className="card-icon-wrapper bg-yellow-light">
-                  <i className="fa-solid fa-shield-halved icon-yellow"></i>
+                  <img src={shift} alt="" />
                 </div>
               </div>
             </div>
@@ -61,9 +65,6 @@ const AdminDashboard = () => {
               <div className="companies-widget">
                 <div className="companies-header">
                   <h2>Companies</h2>
-                  <button className="add-button" aria-label="Add Company">
-                    <span>+</span>
-                  </button>
                 </div>
                 <ul className="companies-list">
                   <li className="company-item">
@@ -86,7 +87,7 @@ const AdminDashboard = () => {
                   </li>
                 </ul>
                 <div className="companies-footer">
-                  <p className="view-all-link">View All</p>
+                  <p className="view-all-link">view all</p>
                 </div>
               </div>
             </div>

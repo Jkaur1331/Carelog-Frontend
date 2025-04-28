@@ -18,7 +18,7 @@ const Forms = () => {
             <nav className="breadcrumb-container">
               <ol className="breadcrumb-list">
                 <li className="breadcrumb-item">Home</li>
-                <li className="breadcrumb-item active">forms</li>
+                <li className="breadcrumb-item active">Forms</li>
               </ol>
             </nav>
             <div className="search-bar">

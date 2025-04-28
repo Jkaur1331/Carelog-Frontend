@@ -33,6 +33,13 @@
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
 }
+
+h2 {
+  color: #4a4a68;
+  font-weight: 600;
+  font-size: 22px;
+}
+
 .container {
   max-width: 95%;
   margin: 0 auto;
@@ -63,8 +70,16 @@ li {
   width: 69%;
 }
 
+.col-60 {
+  width: 59%;
+}
+
 .col-30 {
   width: 29%;
+}
+
+.col-40 {
+  width: 39%;
 }
 
 .col-50 {
@@ -102,15 +117,16 @@ li {
 }
 
 .breadcrumb-item:not(:last-child)::after {
-  content: ">";
+  content: "\f054";
+  font-family: fontawesome;
   margin: 0 10px;
-  color: #8a94a6;
+  color: #667085;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .breadcrumb-item {
-  color: #8a94a6;
+  color: #667085;
   text-decoration: none;
   transition: color 0.2s ease;
   font-size: 14px;
@@ -134,13 +150,11 @@ li {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 20px;
+  padding: 30px;
   background: #fff;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 8px;
   width: 35%;
-  height: 550px;
-  overflow: auto;
 }
 
 .loginModal h1 {
@@ -242,7 +256,7 @@ li {
   font-size: 12px;
   color: white;
   position: absolute;
-  top: 0px;
+  top: -2px;
   left: 2px;
 }
 
@@ -276,7 +290,6 @@ li {
   cursor: pointer;
   text-align: center;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  margin-bottom: 20px;
 }
 
 .btn-add-participant {
@@ -483,15 +496,16 @@ header {
 }
 
 .card-title {
-  font-size: 0.85rem;
-  color: var(--text-light);
-  margin-bottom: 4px;
+  font-size: 14px;
+  color: #4a4a68;
+  margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .card-value {
   font-size: 24px;
   font-weight: 600;
-  color: var(--text-dark);
+  color: #222631;
 }
 
 .card-icon-wrapper {
@@ -563,7 +577,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -618,10 +632,6 @@ header {
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
   transition: background-color 0.2s ease, border-color 0.2s ease,
     color 0.2s ease;
   line-height: 1.5;
@@ -629,9 +639,10 @@ header {
 
 .btn-filter {
   background-color: var(--white);
-  border: 1px solid var(--border-color);
+  border: 1px solid #f4f4f4;
   color: var(--text-medium);
-  padding: 8px 12px;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .btn-filter:hover {
@@ -659,7 +670,7 @@ header {
 }
 
 .participants-table-wrapper {
-  overflow-x: auto;
+  background: #fff;
 }
 
 .participants-table {
@@ -687,6 +698,7 @@ header {
 .participants-table tbody tr {
   border-bottom: 1px solid #f1f3f5;
   position: relative;
+  cursor: pointer;
 }
 
 .participants-table tbody tr:last-child {
@@ -700,6 +712,7 @@ header {
 .participants-table td {
   padding: 12px 15px;
   vertical-align: middle;
+  color: #4a4a68;
 }
 
 .checkbox-col {
@@ -748,8 +761,8 @@ header {
 .patient-id {
   display: block;
   font-size: 0.8rem;
-  color: var(--text-light);
-  margin-top: 2px;
+  color: #a0a8a8;
+  margin-top: 5px;
 }
 
 .status-badge {
@@ -777,7 +790,6 @@ header {
   border: none;
   cursor: pointer;
   color: var(--text-lighter);
-  padding: 5px;
   font-size: 0.95rem;
   line-height: 1;
   transition: color 0.2s ease;
@@ -821,8 +833,12 @@ header {
   transition: transform 0.3s ease-out;
 }
 
-.modal-overlay.visible .modal-panel {
+.modal-panel.slide-in {
   transform: translateX(0);
+}
+
+.modal-panel.slide-out {
+  transform: translateX(100%);
 }
 
 .modal-header {
@@ -967,18 +983,14 @@ header {
 .qr-description {
   font-size: 0.875em;
   color: #6c757d;
-  margin-bottom: 12px;
 }
 
 .btn-generate-qr {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   padding: 9px 15px;
-  background-color: #fff;
-  color: #00a79d;
-  border: 1px solid #00a79d;
-  border-radius: 4px;
+  background-color: #03989e1f;
+  color: #03989e;
+  border: 1px solid #03989e;
+  border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -1070,9 +1082,8 @@ header {
 }
 
 .checkbox-item input[type="checkbox"]:checked::after {
-  content: "\2713";
+  content: "✔";
   font-size: 14px;
-  font-weight: bold;
   color: white;
   position: absolute;
   top: 50%;
@@ -1172,6 +1183,7 @@ header {
   right: 0;
   top: 60px;
   z-index: 99;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .openelips ul li {
@@ -1179,6 +1191,10 @@ header {
   border-bottom: 1px solid #e8e8ec;
   text-align: left;
   cursor: pointer;
+}
+
+.openelips ul li:hover {
+  background: #f9f9f9;
 }
 
 .openelips ul li i {
@@ -1292,7 +1308,7 @@ header {
 }
 
 .modal-overlay-pop .delete-button {
-  background-color: #c85e71;
+  background-color: #cf565e;
   color: #ffffff;
 }
 
@@ -1321,7 +1337,7 @@ header {
 .patient-details h1 {
   font-size: 1.4em;
   font-weight: 600;
-  color: #343a40;
+  color: #4a4a68;
   margin-bottom: 5px;
   display: flex;
   align-items: center;
@@ -1466,15 +1482,6 @@ header {
   text-align: left;
   vertical-align: middle;
   border-bottom: 1px solid #e9ecef;
-}
-
-.table-container table thead th {
-  background-color: #ddf2f1;
-  color: #1ba9a0;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.85em;
-  letter-spacing: 0.5px;
 }
 
 .table-container table thead th:first-child,
@@ -1645,7 +1652,7 @@ input[type="checkbox"] {
 /* admin css */
 .companies-widget {
   background-color: #fff;
-  padding: 20px 25px;
+  padding: 15px;
   border-radius: 12px;
   max-width: 350px;
   width: 100%;
@@ -1658,14 +1665,6 @@ input[type="checkbox"] {
   align-items: center;
   margin-bottom: 20px;
 }
-
-.companies-header h2 {
-  margin: 0;
-  font-size: 1.5em;
-  font-weight: 600;
-  color: #212529;
-}
-
 .add-button {
   background-color: #e0f2f1;
   color: #00796b;
@@ -1774,6 +1773,7 @@ input[type="checkbox"] {
 .companies-footer {
   text-align: right;
   margin-top: 25px;
+  cursor: pointer;
 }
 
 .view-all-link {
@@ -1924,8 +1924,8 @@ input[type="checkbox"] {
 .form-badge,
 .form-count-badge {
   display: inline-block;
-  background-color: #e0f7fa;
-  color: #00796b;
+  background-color: #cccccc1f;
+  color: #03989e;
   padding: 4px 10px;
   border-radius: 15px;
   font-size: 0.8em;
@@ -1940,8 +1940,8 @@ input[type="checkbox"] {
 }
 
 .form-count-badge {
-  background-color: #b2dfdb;
-  color: #004d40;
+  background-color: #03989e1f;
+  color: #03989e;
   font-weight: 600;
   padding: 4px 8px;
 }
@@ -2444,4 +2444,24 @@ circle.progress {
     align-items: center;
     gap: 15px;
   }
+}
+
+.checkbox-col {
+  position: relative;
+}
+
+.checkbox-col .row-checkbox {
+  display: none;
+}
+
+.checkbox-col .row-number {
+  display: inline-block;
+}
+
+.participants-table tr:hover .checkbox-col .row-number {
+  display: none;
+}
+
+.participants-table tr:hover .checkbox-col .row-checkbox {
+  display: inline-block;
 }

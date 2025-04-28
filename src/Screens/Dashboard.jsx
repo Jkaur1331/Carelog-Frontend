@@ -1,8 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../Reuseable/Sidebar";
 import Header from "../Reuseable/Header";
+import total from "../images/total.svg";
+import active from "../images/active.svg";
+import filled from "../images/filled.svg";
+import shift from "../images/shift.svg";
+import filter from "../images/filter.svg";
+import download from "../images/download.svg";
 
 const Dashboard = () => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
+  const openFilter = () => {
+    setShowFilterModal(true);
+    setTimeout(() => {
+      setIsFilterOpen(true);
+    }, 10);
+  };
+
+  const closeFilter = () => {
+    setIsFilterOpen(false);
+    setTimeout(() => {
+      setShowFilterModal(false);
+    }, 300);
+  };
+
   return (
     <div className="flex">
       <Sidebar current={"Dashboard"} />
@@ -18,7 +41,7 @@ const Dashboard = () => {
                   <span class="card-value">200</span>
                 </div>
                 <div class="card-icon-wrapper bg-blue-light">
-                  <i class="fa-solid fa-users icon-blue"></i>
+                  <img src={total} alt="" />
                 </div>
               </div>
               <div class="card card-active-participants">
@@ -27,7 +50,7 @@ const Dashboard = () => {
                   <span class="card-value">12</span>
                 </div>
                 <div class="card-icon-wrapper bg-teal-light">
-                  <i class="fa-solid fa-user-check icon-teal"></i>
+                  <img src={active} alt="" />
                 </div>
               </div>
               <div class="card card-forms-filled">
@@ -36,7 +59,7 @@ const Dashboard = () => {
                   <span class="card-value">12</span>
                 </div>
                 <div class="card-icon-wrapper bg-orange-light">
-                  <i class="fa-solid fa-pen-to-square icon-orange"></i>
+                  <img src={filled} alt="" />
                 </div>
               </div>
               <div class="card card-active-shifts">
@@ -45,7 +68,7 @@ const Dashboard = () => {
                   <span class="card-value">12</span>
                 </div>
                 <div class="card-icon-wrapper bg-yellow-light">
-                  <i class="fa-solid fa-shield-halved icon-yellow"></i>
+                  <img src={shift} alt="" />
                 </div>
               </div>
             </div>
@@ -58,11 +81,14 @@ const Dashboard = () => {
                   <i class="fa-solid fa-magnifying-glass"></i>
                   <input type="text" placeholder="Search" />
                 </div>
-                <button class="btn-filter">
-                  <i class="fa-solid fa-sliders"></i>
-                </button>
-                <button class="btn-add-participant">
-                  <i class="fa-solid fa-plus"></i> Add Participant
+                <button
+                  className="btn-filter"
+                  onClick={openFilter}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <img src={filter} alt="" />
                 </button>
               </div>
             </div>
@@ -86,8 +112,9 @@ const Dashboard = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
+                    <td className="checkbox-col">
+                      <span className="row-number">1</span>
+                      <input type="checkbox" className="row-checkbox" />
                     </td>
                     <td>
                       <span class="patient-name">John Doe</span>
@@ -101,132 +128,7 @@ const Dashboard = () => {
                     <td>12/03/2025</td>
                     <td class="icon-col">
                       <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
-                      </button>
-                    </td>
-                    <td class="icon-col actions-col">
-                      <button class="btn-icon btn-more">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <span class="patient-name">Sarah Smith</span>
-                      <span class="patient-id">P003</span>
-                    </td>
-                    <td>5678 Oak Avenue, SA</td>
-                    <td>
-                      <span class="status-badge status-active">Active</span>
-                    </td>
-                    <td>4</td>
-                    <td>14/03/2025</td>
-                    <td class="icon-col">
-                      <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
-                      </button>
-                    </td>
-                    <td class="icon-col actions-col">
-                      <button class="btn-icon btn-more">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <span class="patient-name">Sarah Smith</span>
-                      <span class="patient-id">P003</span>
-                    </td>
-                    <td>5678 Oak Avenue, SA</td>
-                    <td>
-                      <span class="status-badge status-active">Active</span>
-                    </td>
-                    <td>4</td>
-                    <td>14/03/2025</td>
-                    <td class="icon-col">
-                      <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
-                      </button>
-                    </td>
-                    <td class="icon-col actions-col">
-                      <button class="btn-icon btn-more">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <span class="patient-name">Sarah Smith</span>
-                      <span class="patient-id">P003</span>
-                    </td>
-                    <td>5678 Oak Avenue, SA</td>
-                    <td>
-                      <span class="status-badge status-active">Active</span>
-                    </td>
-                    <td>4</td>
-                    <td>14/03/2025</td>
-                    <td class="icon-col">
-                      <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
-                      </button>
-                    </td>
-                    <td class="icon-col actions-col">
-                      <button class="btn-icon btn-more">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <span class="patient-name">Sarah Smith</span>
-                      <span class="patient-id">P003</span>
-                    </td>
-                    <td>5678 Oak Avenue, SA</td>
-                    <td>
-                      <span class="status-badge status-inactive">Inactive</span>
-                    </td>
-                    <td>4</td>
-                    <td>14/03/2025</td>
-                    <td class="icon-col">
-                      <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
-                      </button>
-                    </td>
-                    <td class="icon-col actions-col">
-                      <button class="btn-icon btn-more">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="checkbox-col">
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <span class="patient-name">Sarah Smith</span>
-                      <span class="patient-id">P003</span>
-                    </td>
-                    <td>5678 Oak Avenue, SA</td>
-                    <td>
-                      <span class="status-badge status-inactive">Inactive</span>
-                    </td>
-                    <td>4</td>
-                    <td>14/03/2025</td>
-                    <td class="icon-col">
-                      <button class="btn-icon btn-download">
-                        <i class="fa-solid fa-download"></i>
+                        <img src={download} alt="" />
                       </button>
                     </td>
                     <td class="icon-col actions-col">
@@ -240,6 +142,91 @@ const Dashboard = () => {
             </div>
           </section>
         </div>
+        {showFilterModal && (
+          <div className={`modal-overlay ${isFilterOpen ? "visible" : ""}`}>
+            <div
+              className={`modal-panel ${
+                isFilterOpen ? "slide-in" : "slide-out"
+              }`}
+            >
+              <div className="modal-header">
+                <h2>Filter By</h2>
+                <button
+                  className="close-button"
+                  id="closeModalBtn"
+                  aria-label="Close modal"
+                  onClick={closeFilter}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label class="group-label">Participant Status</label>
+                    <div class="checkbox-group">
+                      <div class="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="status-active"
+                          name="status-active"
+                        />
+                        <label for="status-active">Active</label>
+                      </div>
+                      <div class="checkbox-item">
+                        <input
+                          type="checkbox"
+                          id="status-inactive"
+                          name="status-inactive"
+                          checked
+                        />
+                        <label for="status-inactive">Inactive</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="group-label">Forms</label>
+                    <div class="multi-select-input">
+                      <div class="pills-container">
+                        <span class="pill">
+                          Hygiene <span class="close-icon">×</span>
+                        </span>
+                        <span class="pill">
+                          Bowel Movement <span class="close-icon">×</span>
+                        </span>
+                      </div>
+                      <span class="dropdown-arrow">▾</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="group-label">Addition Date</label>
+                    <div class="date-input-container">
+                      <input type="date" />
+                      <span class="calendar-icon"></span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  id="cancelModalBtn"
+                  onClick={closeFilter}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  form="participantForm"
+                  className="btn btn-primary"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
