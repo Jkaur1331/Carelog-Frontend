@@ -34,7 +34,7 @@ const Sidebar = ({ current }) => {
     } else if (val === "Participant Management") {
       navigate("/participant");
     } else if (val === "Forms") {
-      navigate("/forms");
+      navigate("/adminform");
     } else if (val === "Change Password") {
       navigate("/");
     } else if (val === "Log Out") {

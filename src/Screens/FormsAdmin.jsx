@@ -7,10 +7,11 @@ import behave from "../images/behave.svg";
 import bowel from "../images/bowel.svg";
 import hygiene from "../images/hygiene.svg";
 import glucose from "../images/glucose.svg";
-const Forms = () => {
+import Sidebar from "../Reuseable/Sidebar";
+const FormsAdmin = () => {
   return (
     <div className="flex">
-      <SidebarAdmin current={"Forms"} />
+      <Sidebar current={"Forms"} />
       <div className="body-area">
         <Header />
         <div className="main-body">
@@ -141,4 +142,4 @@ const Forms = () => {
   );
 };
 
-export default Forms;
+export default FormsAdmin;

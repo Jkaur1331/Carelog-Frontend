@@ -4,6 +4,11 @@ import Sidebar from "../Reuseable/Sidebar";
 import user from "../images/user.svg";
 import filter from "../images/filter.svg";
 import download from "../images/download.svg";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { addParticipant } from "../store/Services/AllApi/index.tsx";
+import { toast } from "react-toastify";
+import Loader from "../Reuseable/Loader.jsx";
 
 const Participant = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +17,59 @@ const Participant = () => {
   const [openElips, setOpenElips] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const options = ["Hygiene", "Bowel Movement", "Medication", "Nutrition"];
+
+  const validationSchema = Yup.object({
+    participantName: Yup.string().required("Participant name is required"),
+    participantId: Yup.string().required("Participant ID is required"),
+    address: Yup.string().required("Address is required"),
+    contactInfo: Yup.string().required("Contact number is required"),
+    gender: Yup.string().required("Gender is required"),
+    selectedForms: Yup.array()
+      .min(1, "At least one form must be selected")
+      .required("Form selection is required"),
+  });
+
+  const clearvalue = () => {
+    formik.resetForm();
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      participantName: "",
+      participantId: "",
+      address: "",
+      contactInfo: "",
+      gender: "",
+      selectedForms: [],
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        const res = await addParticipant({
+          body: {
+            name: values.participantName,
+            phone: values.contactInfo,
+            patientId: values.participantId,
+            gender: values.gender,
+            selectForms: values.selectedForms,
+            address: values.address,
+            adminId: localStorage.getItem("userId"),
+          },
+        });
+        toast.success(res.message);
+        closeModal();
+        clearvalue();
+      } catch (err) {
+        toast.error("Failed to create participant");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
 
   const openModal = () => {
     setShowModal(true);
@@ -39,10 +97,24 @@ const Participant = () => {
     }, 300);
   };
   const closeDelete = () => setOpenDelete(false);
+  const handleSelect = (e) => {
+    const value = e.target.value;
+    if (value && !formik.values.selectedForms.includes(value)) {
+      const updated = [...formik.values.selectedForms, value];
 
-  console.log("first", openDelete);
+      formik.setFieldValue("selectedForms", updated);
+    }
+  };
+
+  const removeOption = (value) => {
+    const updated = formik.values.selectedForms.filter((opt) => opt !== value);
+
+    formik.setFieldValue("selectedForms", updated);
+  };
+
   return (
     <div className="flex">
+      <Loader loading={isLoading} />
       <Sidebar current={"Participant Management"} />
       <div className="body-area">
         <Header />
@@ -197,17 +269,13 @@ const Participant = () => {
             >
               <div className="modal-header">
                 <h2>Add New Participant</h2>
-                <button
-                  className="close-button"
-                  id="closeModalBtn"
-                  aria-label="Close modal"
-                  onClick={closeModal}
-                >
+                <button className="close-button" onClick={closeModal}>
                   ×
                 </button>
               </div>
+
               <div className="modal-body">
-                <form action="#" method="post" id="participantForm">
+                <form id="participantForm" onSubmit={formik.handleSubmit}>
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="participantName">
@@ -217,85 +285,141 @@ const Participant = () => {
                         type="text"
                         id="participantName"
                         name="participantName"
-                        required
-                        placeholder="Enter participant name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.participantName}
                       />
+                      {formik.touched.participantName &&
+                        formik.errors.participantName && (
+                          <div className="error">
+                            {formik.errors.participantName}
+                          </div>
+                        )}
                     </div>
+
                     <div className="form-group">
                       <label htmlFor="participantId">
-                        Participant Id<span className="required">*</span>
+                        Participant ID<span className="required">*</span>
                       </label>
                       <input
                         type="text"
                         id="participantId"
                         name="participantId"
-                        required
-                        placeholder="Enter participant ID"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.participantId}
                       />
+                      {formik.touched.participantId &&
+                        formik.errors.participantId && (
+                          <div className="error">
+                            {formik.errors.participantId}
+                          </div>
+                        )}
                     </div>
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="address">Address</label>
+                    <label htmlFor="address">
+                      Address<span className="required">*</span>
+                    </label>
                     <input
                       type="text"
                       id="address"
                       name="address"
-                      placeholder="Enter address"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.address}
                     />
+                    {formik.touched.address && formik.errors.address && (
+                      <div className="error">{formik.errors.address}</div>
+                    )}
                   </div>
+
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="contactInfo">
-                        Contact Information<span className="required">*</span>
+                        Contact Info<span className="required">*</span>
                       </label>
                       <input
                         type="tel"
                         id="contactInfo"
                         name="contactInfo"
-                        required
-                        placeholder="Enter contact number"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.contactInfo}
                       />
+                      {formik.touched.contactInfo &&
+                        formik.errors.contactInfo && (
+                          <div className="error">
+                            {formik.errors.contactInfo}
+                          </div>
+                        )}
                     </div>
+
                     <div className="form-group">
-                      <label htmlFor="gender">Gender</label>
-                      <input
-                        type="text"
+                      <label htmlFor="gender">
+                        Gender<span className="required">*</span>
+                      </label>
+                      <select
                         id="gender"
                         name="gender"
-                        placeholder="Enter gender"
-                      />
+                        value={formik.values.gender}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                      >
+                        <option value="" label="Select gender" disabled />
+                        <option value="Male" label="Male" />
+                        <option value="Female" label="Female" />
+                        <option value="Other" label="Other" />
+                      </select>
+                      {formik.touched.gender && formik.errors.gender && (
+                        <div className="error">{formik.errors.gender}</div>
+                      )}
                     </div>
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="selectForms">
+                    <label className="group-label">
                       Select Forms<span className="required">*</span>
                     </label>
-                    <div className="select-forms-container" id="selectForms">
-                      <div className="selected-pills">
-                        <span className="form-pill">
-                          Hygiene{" "}
-                          <button
-                            type="button"
-                            className="pill-close"
-                            aria-label="Remove Hygiene"
-                          >
-                            ×
-                          </button>
-                        </span>
-                        <span className="form-pill">
-                          Bowel Movement{" "}
-                          <button
-                            type="button"
-                            className="pill-close"
-                            aria-label="Remove Bowel Movement"
-                          >
-                            ×
-                          </button>
-                        </span>
+                    <div className="multi-select-input">
+                      <select onChange={handleSelect} defaultValue="">
+                        <option value="" disabled hidden>
+                          Select form...
+                        </option>
+                        {options.map(
+                          (option, index) =>
+                            !formik.values.selectedForms.includes(option) && (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            )
+                        )}
+                      </select>
+
+                      {formik.touched.selectedForms &&
+                        formik.errors.selectedForms && (
+                          <div className="error">
+                            {formik.errors.selectedForms}
+                          </div>
+                        )}
+
+                      <div className="pills-container">
+                        {formik.values.selectedForms.map((option, index) => (
+                          <span className="pill" key={index}>
+                            {option}
+                            <span
+                              className="close-icon"
+                              onClick={() => removeOption(option)}
+                            >
+                              ×
+                            </span>
+                          </span>
+                        ))}
                       </div>
-                      <span className="dropdown-arrow">▾</span>
                     </div>
                   </div>
+
                   <div className="form-group qr-section flex space-bw">
                     <div className="col-60">
                       <label>
@@ -308,18 +432,18 @@ const Participant = () => {
                       </p>
                     </div>
                     <div className="col-40">
-                      <button type="button" className="btn btn-generate-qr">
+                      {/* <button type="button" className="btn btn-generate-qr">
                         <i className="fas fa-qrcode"></i> Generate QR Code
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </form>
               </div>
+
               <div className="modal-footer">
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  id="cancelModalBtn"
                   onClick={closeModal}
                 >
                   Cancel
@@ -329,7 +453,7 @@ const Participant = () => {
                   form="participantForm"
                   className="btn btn-primary"
                 >
-                  Save
+                  <i className="fas fa-qrcode"></i> Generate QR Code
                 </button>
               </div>
             </div>
