@@ -4,9 +4,12 @@ import SidebarAdmin from "../Reuseable/SidebarAdmin";
 import filter from "../images/filter.svg";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
 import { Select, Pagination } from "antd";
+import pana from "../images/pana.png";
 import {
   addCompany,
+  deleteCompany,
   editParticipant,
   getAllParticipant,
 } from "../store/Services/AllApi/index.tsx";
@@ -34,6 +37,17 @@ const Companies = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeElipsRow, setActiveElipsRow] = useState(null);
   const [editUserData, setEditUserData] = useState([]);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [companyIdTo, setCompanyIdTo] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+  console.log("lola", companyName);
+  console.log("lola1", companyIdTo);
 
   const getAllParticipantFunction = () => {
     setLoading(true);
@@ -41,6 +55,7 @@ const Companies = () => {
       query: {
         page: currentPage,
         limit: pageSize,
+        searchParam: search,
       },
     })
       .then((res) => {
@@ -56,7 +71,7 @@ const Companies = () => {
   };
   const handlePageSizeChange = (value) => {
     setPageSize(value);
-    setCurrentPage(1); // reset to first page
+    setCurrentPage(1);
   };
   function formatDateToDDMMYYYY(dateString) {
     const date = new Date(dateString);
@@ -155,16 +170,30 @@ const Companies = () => {
   });
   useEffect(() => {
     if (editUserData) {
+      let formsArray = [];
+      if (editUserData.selectedFroms) {
+        if (typeof editUserData.selectedFroms === "string") {
+          try {
+            formsArray = JSON.parse(editUserData.selectedFroms);
+          } catch (e) {
+            console.error("Failed to parse selectedFroms:", e);
+            formsArray = []; // Fallback to empty if parsing fails
+          }
+        } else if (Array.isArray(editUserData.selectedFroms)) {
+          formsArray = editUserData.selectedFroms;
+        }
+      }
+
       setInitialValuesEdit({
-        CompanyName: editUserData.companyName,
-        CompanyId: editUserData.companyId,
-        contactInfo: editUserData.contactPersonName,
-        phoneNumber: editUserData.phoneNumber,
-        logo: editUserData.logo,
-        subsPlan: editUserData.subscriptionPlan,
+        CompanyName: editUserData.companyName || "", // Good practice to add fallbacks
+        CompanyId: editUserData.companyId || "",
+        contactInfo: editUserData.contactPersonName || "",
+        phoneNumber: editUserData.phoneNumber || "",
+        logo: editUserData.logo || null, // Assuming logo is a URL string or null
+        subsPlan: editUserData.subscriptionPlan || "",
         startDate: editUserData.startDate?.split("T")[0] || "",
         endDate: editUserData.endDate?.split("T")[0] || "",
-        selectedForms: editUserData.selectedFroms,
+        selectedForms: formsArray, // Use the potentially parsed array
       });
     }
   }, [editUserData]);
@@ -200,7 +229,7 @@ const Companies = () => {
         toast.error(err?.message || "Something went wrong");
       })
       .finally(() => {
-        setLoading(false); // ✅ Stop loader
+        setLoading(false);
       });
   };
 
@@ -278,26 +307,69 @@ const Companies = () => {
     formik.resetForm();
     setSelectedOptions([]);
   };
-
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+  useEffect(() => {
+    let isActive = true;
     setLoading(true);
+
     getAllParticipant({
       query: {
         page: currentPage,
         limit: pageSize,
+        searchParam: debouncedSearch,
       },
     })
       .then((res) => {
-        setAllParticipantData(res.Data.admins);
-        setTotalAdmins(res.Data.totalAdmins);
+        if (isActive) {
+          setAllParticipantData(res?.Data?.admins || []);
+          setTotalAdmins(res?.Data?.totalAdmins || 0);
+        }
       })
       .catch((err) => {
-        console.error("Error fetching participants", err);
+        if (isActive) {
+          console.error("Error fetching participants", err);
+          toast.error("Failed to fetch companies.");
+          setAllParticipantData([]);
+          setTotalAdmins(0);
+        }
       })
       .finally(() => {
-        setLoading(false);
+        if (isActive) {
+          setLoading(false);
+        }
       });
-  }, [currentPage, pageSize]);
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentPage, pageSize, debouncedSearch]);
+
+  const deleteCompanyFinal = async () => {
+    setLoading(true);
+    try {
+      await deleteCompany({
+        query: {
+          id: companyIdTo,
+        },
+      });
+      toast.success("Deleted Successfully");
+      getAllParticipantFunction();
+      setOpenDelete(false);
+    } catch (error) {
+      toast.error("Failed to delete company");
+      console.error("Delete error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex">
@@ -309,14 +381,24 @@ const Companies = () => {
           <div className="participants-header">
             <nav className="breadcrumb-container">
               <ol className="breadcrumb-list">
-                <li className="breadcrumb-item">Home</li>
+                <li
+                  className="breadcrumb-item"
+                  onClick={() => navigate("/admin")}
+                >
+                  Home
+                </li>
                 <li className="breadcrumb-item active">Companies</li>
               </ol>
             </nav>
             <div className="participants-controls">
               <div className="search-bar">
                 <i className="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={search}
+                  onChange={handleSearch}
+                />
               </div>
               <button
                 className="btn-filter"
@@ -382,102 +464,121 @@ const Companies = () => {
                 </tr>
               </thead>
               <tbody className="table-body">
-                {allParaticipantData.map((itm, index) => (
-                  <tr className="table-row" key={itm.id}>
-                    <td className="checkbox-col">
-                      <span className="row-number">{index + 1}</span>
-                      <input type="checkbox" className="row-checkbox" />
-                    </td>
-                    <td className="cell-company">
-                      <img
-                        src={itm.logo}
-                        alt="Company Logo"
-                        className="company-logo"
-                      />
-                      <div className="company-info">
-                        <span className="company-name">{itm.companyName}</span>
-                        <span className="company-email">{itm.companyId}</span>
-                      </div>
-                    </td>
-                    <td className="cell-subscription">
-                      {itm.subscriptionPlan}
-                    </td>
-                    <td className="cell-status">
-                      <span className="status-badge status-active">Active</span>
-                    </td>
-                    <td className="cell-forms">
-                      {/* Show first 3 items */}
-                      {itm.selectedFroms.slice(0, 3).map((pop, i) => (
-                        <span key={i} className="form-badge">
-                          {pop}
-                        </span>
-                      ))}
-
-                      {/* Show +N and dropdown only if more than 3 */}
-                      {itm.selectedFroms.length > 3 && (
-                        <div className="badge-wrapper">
-                          <span className="form-count-badge">
-                            +{itm.selectedFroms.length - 3}
+                {allParaticipantData.length > 0 ? (
+                  allParaticipantData.map((itm, index) => (
+                    <tr className="table-row" key={itm.id}>
+                      <td className="checkbox-col">
+                        <span className="row-number">{index + 1}</span>
+                        <input type="checkbox" className="row-checkbox" />
+                      </td>
+                      <td className="cell-company">
+                        <img
+                          src={itm.logo}
+                          alt="Company Logo"
+                          className="company-logo"
+                        />
+                        <div className="company-info">
+                          <span className="company-name">
+                            {itm.companyName}
                           </span>
-                          <div className="badge-dropdown">
-                            {itm.selectedFroms.slice(3).map((pop, i) => (
-                              <span key={i} className="form-badge">
-                                {pop}
-                              </span>
-                            ))}
+                          <span className="company-email">{itm.companyId}</span>
+                        </div>
+                      </td>
+                      <td className="cell-subscription">
+                        {itm.subscriptionPlan}
+                      </td>
+                      <td className="cell-status">
+                        <span className="status-badge status-active">
+                          Active
+                        </span>
+                      </td>
+                      <td className="cell-forms">
+                        {/* Show first 3 items */}
+                        {itm.selectedFroms.slice(0, 3).map((pop, i) => (
+                          <span key={i} className="form-badge">
+                            {pop}
+                          </span>
+                        ))}
+
+                        {/* Show +N and dropdown only if more than 3 */}
+                        {itm.selectedFroms.length > 3 && (
+                          <div className="badge-wrapper">
+                            <span className="form-count-badge">
+                              +{itm.selectedFroms.length - 3}
+                            </span>
+                            <div className="badge-dropdown">
+                              {itm.selectedFroms.slice(3).map((pop, i) => (
+                                <span key={i} className="form-badge">
+                                  {pop}
+                                </span>
+                              ))}
+                            </div>
                           </div>
+                        )}
+                      </td>
+                      <td className="cell-date">
+                        {formatDateToDDMMYYYY(itm.startDate)}
+                      </td>
+                      <td className="cell-actions">
+                        <button
+                          className="action-button"
+                          onClick={() => setActiveElipsRow(itm.id)}
+                        >
+                          <i className="fas fa-ellipsis-v action-icon"></i>
+                        </button>
+                      </td>
+                      {activeElipsRow === itm.id && (
+                        <div className="openelips" ref={elipsRef}>
+                          <ul>
+                            <li
+                              onClick={() => {
+                                setActiveElipsRow(null);
+                                openEditModal();
+                                setEditUserData(itm);
+                              }}
+                            >
+                              <i className="fa-solid fa-pencil"></i> Edit
+                            </li>
+                            <li
+                              className="green"
+                              onClick={() => setActiveElipsRow(null)}
+                            >
+                              <i className="fa-solid fa-arrow-right-arrow-left"></i>{" "}
+                              Change Status
+                            </li>
+                            <li
+                              className="red"
+                              onClick={() => {
+                                setOpenDelete(true);
+                                setActiveElipsRow(null);
+                                setCompanyIdTo(itm.id);
+                                setCompanyName(itm.companyName);
+                              }}
+                            >
+                              <i className="fa-solid fa-trash"></i> Delete
+                            </li>
+                          </ul>
                         </div>
                       )}
-                    </td>
-                    <td className="cell-date">
-                      {formatDateToDDMMYYYY(itm.startDate)}
-                    </td>
-                    <td className="cell-actions">
-                      <button
-                        className="action-button"
-                        onClick={() => setActiveElipsRow(itm.id)}
-                      >
-                        <i className="fas fa-ellipsis-v action-icon"></i>
-                      </button>
-                    </td>
-                    {activeElipsRow === itm.id && (
-                      <div className="openelips" ref={elipsRef}>
-                        <ul>
-                          <li
-                            onClick={() => {
-                              setActiveElipsRow(null);
-                              openEditModal();
-                              setEditUserData(itm);
-                            }}
-                          >
-                            <i className="fa-solid fa-pencil"></i> Edit
-                          </li>
-                          <li
-                            className="green"
-                            onClick={() => setActiveElipsRow(null)}
-                          >
-                            <i className="fa-solid fa-arrow-right-arrow-left"></i>{" "}
-                            Change Status
-                          </li>
-                          <li
-                            className="red"
-                            onClick={() => {
-                              setOpenDelete(true);
-                              setActiveElipsRow(null);
-                            }}
-                          >
-                            <i className="fa-solid fa-trash"></i> Delete
-                          </li>
-                        </ul>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="no-data-cell">
+                      <div className="no-data-content">
+                        <img src={pana} alt="No data" />
+                        <p>
+                          <b>No result found</b>
+                        </p>
                       </div>
-                    )}
+                    </td>
                   </tr>
-                ))}
+                )}
                 {openDelete && (
                   <div className="modal-overlay-pop">
                     <div className="modal-content">
                       <div className="modal-header">
-                        <h2 className="modal-title">Carenova</h2>
+                        <h2 className="modal-title">{companyName}</h2>
                         <button
                           className="modal-close-button"
                           onClick={closeDelete}
@@ -488,17 +589,23 @@ const Companies = () => {
                       <div className="modal-body">
                         <p>
                           Are you sure you want to delete{" "}
-                          <span className="participant-name">Carenova</span>?
+                          <span className="participant-name">
+                            {companyName}
+                          </span>
+                          ?
                         </p>
                       </div>
-                      <div className="modal-footer">
+                      <div className="footer">
                         <button
                           className="modal-button cancel-button"
                           onClick={closeDelete}
                         >
                           Cancel
                         </button>
-                        <button className="modal-button delete-button">
+                        <button
+                          className="modal-button delete-button"
+                          onClick={deleteCompanyFinal}
+                        >
                           <i className="fas fa-trash-alt delete-icon"></i>{" "}
                           Delete
                         </button>
@@ -903,6 +1010,7 @@ const Companies = () => {
                   errors,
                   handleChange,
                   handleSubmit,
+                  touched,
                   setFieldValue,
                 }) => (
                   <form onSubmit={handleSubmit}>
@@ -1057,6 +1165,88 @@ const Companies = () => {
                         {errors.endDate && (
                           <div className="error">{errors.endDate}</div>
                         )}
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label className="group-label">
+                        Forms<span className="required">*</span>{" "}
+                        {/* Assuming forms are required in edit too */}
+                      </label>
+                      <div className="multi-select-input">
+                        <select
+                          onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            // Ensure values.selectedForms is treated as an array
+                            const currentSelectedForms = Array.isArray(
+                              values.selectedForms
+                            )
+                              ? values.selectedForms
+                              : [];
+                            if (
+                              selectedValue &&
+                              !currentSelectedForms.includes(selectedValue)
+                            ) {
+                              setFieldValue("selectedForms", [
+                                ...currentSelectedForms,
+                                selectedValue,
+                              ]);
+                            }
+                            e.target.value = ""; // Reset select dropdown
+                          }}
+                          defaultValue=""
+                        >
+                          <option value="" disabled hidden>
+                            Select form...
+                          </option>
+                          {options.map((option, index) => {
+                            const currentSelectedForms = Array.isArray(
+                              values.selectedForms
+                            )
+                              ? values.selectedForms
+                              : [];
+                            return (
+                              !currentSelectedForms.includes(option) && (
+                                <option key={index} value={option}>
+                                  {option}
+                                </option>
+                              )
+                            );
+                          })}
+                        </select>
+
+                        {/* Display validation error for selectedForms */}
+                        {touched.selectedForms && errors.selectedForms && (
+                          <div className="error">{errors.selectedForms}</div>
+                        )}
+
+                        <div className="pills-container">
+                          {(Array.isArray(values.selectedForms)
+                            ? values.selectedForms
+                            : []
+                          ).map((option, index) => (
+                            <span className="pill" key={index}>
+                              {option}
+                              <span
+                                className="close-icon"
+                                onClick={() => {
+                                  const currentSelectedForms = Array.isArray(
+                                    values.selectedForms
+                                  )
+                                    ? values.selectedForms
+                                    : [];
+                                  setFieldValue(
+                                    "selectedForms",
+                                    currentSelectedForms.filter(
+                                      (item) => item !== option
+                                    )
+                                  );
+                                }}
+                              >
+                                ×
+                              </span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
 

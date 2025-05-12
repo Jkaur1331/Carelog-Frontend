@@ -2,8 +2,8 @@ import Axios from "axios";
 import queryString from "querystring";
 
 export const hostname = () => {
-  // let hostUrl = "http://.168.0.19:8000/api";
-  let hostUrl = "http://192.168.0.192:4000/api/v1/";
+  // let hostUrl = "http://192.168.0.193:4000/api/v1/";
+  let hostUrl = "https://carelog-backend1.onrender.com/api/v1/";
 
   return hostUrl;
 };

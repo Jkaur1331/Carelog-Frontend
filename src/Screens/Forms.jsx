@@ -7,7 +7,9 @@ import behave from "../images/behave.svg";
 import bowel from "../images/bowel.svg";
 import hygiene from "../images/hygiene.svg";
 import glucose from "../images/glucose.svg";
+import { useNavigate } from "react-router-dom";
 const Forms = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex">
       <SidebarAdmin current={"Forms"} />
@@ -22,7 +24,12 @@ const Forms = () => {
           >
             <nav className="breadcrumb-container">
               <ol className="breadcrumb-list">
-                <li className="breadcrumb-item">Home</li>
+                <li
+                  className="breadcrumb-item"
+                  onClick={() => navigate("/admin")}
+                >
+                  Home
+                </li>
                 <li className="breadcrumb-item active">Forms</li>
               </ol>
             </nav>

@@ -84,7 +84,6 @@ const Login = () => {
             Log in to continue managing your patients and forms
           </p>
         </div>
-
         <Formik
           initialValues={{ email: "", password: "", remember: false }}
           validationSchema={validationSchema}
